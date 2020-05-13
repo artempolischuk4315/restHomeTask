@@ -1,10 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>$Title$</title>
+    <title>Update Player</title>
 </head>
 <body>
-$END$
+<div class="container">
+
+
+    <form th:action ="@{/players/editor}" th:method="PUT">
+
+
+
+        <label for="name"> Name </label>
+        <input type="text" class="form-control" id="name"
+               required
+               pattern="^[a-zA-Z]+$"
+               name="name"
+               th:value="${player.name}">
+
+        <label for="lastName"> Last Name </label>
+        <input type="lastName" class="form-control" id="lastName"
+               required
+               pattern="^[a-zA-Z]+$"
+               name="lastName"
+               th:value="${player.lastName}"
+               hidden>
+
+        <label for="age"> Age </label>
+        <input type="age" class="form-control" id="age"
+               required
+               name="age"
+               th:value="${player.age}">
+
+        <label for="team"> Team(if you want player to be without team - enter 'f/a') </label>
+        <input type="team" class="form-control" id="team"
+               pattern="^[a-zA-Z/0-9]+$"
+               required
+               name="team"
+               th:value="${player.team.name}">
+
+
+        <button type="submit">Ok</button>
+    </form>
+
+</div>
 </body>
 </html>
