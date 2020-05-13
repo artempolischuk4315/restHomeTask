@@ -1,22 +1,24 @@
 package polishchuk.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import polishchuk.dto.PlayerDto;
 import polishchuk.entity.Player;
 import polishchuk.entity.Team;
+import polishchuk.mapper.Mapper;
 import polishchuk.repository.PlayerRepository;
 import polishchuk.repository.TeamRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PlayerService {
 
     private PlayerRepository playerRepository;
     private TeamRepository teamRepository;
+
 
     @Autowired
     public PlayerService(PlayerRepository playerRepository, TeamRepository teamRepository){
@@ -74,5 +76,11 @@ public class PlayerService {
         Optional<Player> player = playerRepository.findByLastName(lastName);
 
         return player.orElse(null);
+    }
+
+    public List<Player> findAllFreePlayers(){
+        return playerRepository.findAll().stream()
+                .filter(player -> player.getTeam().getName().equals("f/a"))
+                .collect(Collectors.toList());
     }
 }

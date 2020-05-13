@@ -34,6 +34,11 @@ public class PlayerController {
         return "all-players";
     }
 
+    @GetMapping("/players/redactor")
+    public String showPlayerRedactor(){
+
+        return "player-redactor";
+    }
 
     @PostMapping("/players/creator")
     public String addPlayer(PlayerDto player, Model model){

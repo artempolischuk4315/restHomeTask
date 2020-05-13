@@ -5,6 +5,24 @@
     <title>All teams</title>
 </head>
 <body>
+
+<form th:action = "@{/teams/redactor}" method="GET">
+    <button type="submit">Create team</button>
+</form>
+
+<form th:action ="@{/teams/player-to-team}" method="get">
+
+    <button type="submit">Update team with new player</button>
+</form>
+
+<form th:action = "@{/teams/remover}" th:method="DELETE">
+    <input type="text" class="form-control" id="teamName_delete" placeholder="teamName"
+           pattern="^[a-zA-Z]+$"
+           required
+           name="teamName">
+    <button type="submit">Delete team</button>
+</form>
+
 <div id = "content">
     <table class="datatable">
         <thead>

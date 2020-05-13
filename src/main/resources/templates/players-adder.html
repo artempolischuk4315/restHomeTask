@@ -2,29 +2,29 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>All players</title>
+    <title>Add Players</title>
 </head>
 <body>
 
-<form th:action = "@{/players/redactor}" method="GET">
-    <button type="submit">Create player</button>
-</form>
 
-<form th:action = "@{/players/remover}" th:method="DELETE">
+
+<form th:action = "@{/teams/player-to-team}" th:method="PUT">
+
+    <label for="teamName"> Last Name </label>
+    <input type="teamName" class="form-control" id="teamName"
+           required
+           pattern="^[a-zA-Z]+$"
+           name="teamName">
+
     <input type="text" class="form-control" id="lastName_delete" placeholder="lastName"
            pattern="^[a-zA-Z]+$"
            required
            name="lastName">
-    <button type="submit">Delete player</button>
+    <button type="submit">You can add player in new team</button>
 </form>
 
-
-<form th:action = "@{/players/editor}" th:method="POST">
-    <input type="text" class="form-control" id="lastName_update" placeholder="lastName"
-           pattern="^[a-zA-Z]+$"
-           required
-           name="lastName">
-    <button type="submit">Update player</button>
+<form th:action = "@{/}" th:method="GET">
+    <button type="submit">On main</button>
 </form>
 
 <div id = "content">
