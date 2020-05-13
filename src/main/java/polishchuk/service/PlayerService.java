@@ -31,48 +31,37 @@ public class PlayerService {
     public boolean savePlayer(PlayerDto player){
 
         Optional<Team> playerTeam = teamRepository.findByName(player.getTeam());
-
-        if(!playerTeam.isPresent()){
+        if(!playerTeam.isPresent()||
+                playerRepository.findByLastName(player.getLastName()).isPresent()){
             return false;
         }
 
         Player newPlayer = new Player(player.getName(),
                 player.getLastName(), player.getAge(), playerTeam.get());
-
-        try {
-            playerRepository.save(newPlayer);
-        }catch (DataIntegrityViolationException e){
-            return false;
-        }
+        playerRepository.save(newPlayer);
 
         return true;
     }
 
     public boolean updatePlayer(PlayerDto player){
-
         Optional<Team> playerTeam = teamRepository.findByName(player.getTeam());
+        Optional<Player> playerInDbOptional = playerRepository.findByLastName(player.getLastName());
 
-        if(!playerTeam.isPresent()){
+        if(!playerTeam.isPresent()||!playerInDbOptional.isPresent()){
             return false;
         }
 
-        Player playerInDb = playerRepository.findByLastName(player.getLastName()).get();
-
+        Player playerInDb = playerInDbOptional.get();
         playerInDb.setAge(player.getAge());
         playerInDb.setName(player.getName());
         playerInDb.setTeam(playerTeam.get());
 
-        try {
-            playerRepository.save(playerInDb);
-        }catch (DataIntegrityViolationException e){
-            return false;
-        }
+        playerRepository.save(playerInDb);
 
         return true;
     }
 
     public boolean deletePlayer(String lastName){
-
         Optional<Player> player = playerRepository.findByLastName(lastName);
         if(!player.isPresent()){
             return false;
@@ -85,7 +74,5 @@ public class PlayerService {
         Optional<Player> player = playerRepository.findByLastName(lastName);
 
         return player.orElse(null);
-
     }
-
 }
