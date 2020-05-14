@@ -8,20 +8,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import polishchuk.dto.TeamDto;
 import polishchuk.entity.Player;
 import polishchuk.entity.Team;
-import polishchuk.mapper.Mapper;
+import polishchuk.service.mapper.Mapper;
 import polishchuk.repository.PlayerRepository;
 import polishchuk.repository.TeamRepository;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TeamServiceTest {
 
+    public static final int TEAM_ID = 1;
     @InjectMocks
     TeamService systemUnderTest;
 
@@ -45,7 +44,20 @@ class TeamServiceTest {
     @Mock
     Mapper<TeamDto, Team> mapper;
 
+    @Test
+    void findByIdShouldReturnTeamDto(){
+        when(teamRepository.findById(TEAM_ID)).thenReturn(java.util.Optional.of(teamEntity));
+        when(mapper.mapEntityToDto(teamEntity)).thenReturn(teamDto);
 
+        TeamDto actual = systemUnderTest.findById(TEAM_ID);
 
+        assertEquals(teamDto, actual);
+    }
 
+    @Test
+    void findByIdShouldThrowEntityNotFoundExceptionIfNoSuchTeam(){
+        when(teamRepository.findById(TEAM_ID)).thenReturn(java.util.Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, ()->systemUnderTest.findById(TEAM_ID));
+    }
 }

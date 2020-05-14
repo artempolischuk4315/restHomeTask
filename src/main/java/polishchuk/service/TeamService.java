@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import polishchuk.dto.TeamDto;
 import polishchuk.entity.Player;
 import polishchuk.entity.Team;
-import polishchuk.mapper.Mapper;
+import polishchuk.service.mapper.Mapper;
 import polishchuk.repository.PlayerRepository;
 import polishchuk.repository.TeamRepository;
 
@@ -39,7 +39,7 @@ public class TeamService {
     public TeamDto save(TeamDto team){
         Optional<Team> teamInDb = teamRepository.findByName(team.getName());
         if(teamInDb.isPresent()){
-           throw new EntityNotFoundException("No such team");
+           throw new EntityNotFoundException("Such team already exists");
         }
 
         return mapper.mapEntityToDto(teamRepository.save(mapper.mapDtoToEntity(team)));

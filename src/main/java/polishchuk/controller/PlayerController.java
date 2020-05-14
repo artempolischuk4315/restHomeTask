@@ -1,7 +1,6 @@
 package polishchuk.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import polishchuk.dto.PlayerDto;
 import polishchuk.service.PlayerService;
@@ -34,7 +33,7 @@ public class PlayerController {
     }
 
     @PutMapping("/players/{id}")
-    public PlayerDto updatePlauer(@RequestBody PlayerDto playerDto, @PathVariable Integer id){
+    public PlayerDto updatePlayer(@RequestBody PlayerDto playerDto, @PathVariable Integer id){
         return playerService.updatePlayer(playerDto, id);
     }
 

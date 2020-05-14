@@ -1,9 +1,9 @@
-package polishchuk.mapper.impl;
+package polishchuk.service.mapper.impl;
 
 import org.springframework.stereotype.Component;
 import polishchuk.dto.TeamDto;
 import polishchuk.entity.Team;
-import polishchuk.mapper.Mapper;
+import polishchuk.service.mapper.Mapper;
 
 import java.util.Collections;
 

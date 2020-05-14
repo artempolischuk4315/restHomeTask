@@ -14,12 +14,10 @@ import java.util.Map;
 public class TeamController {
 
     private TeamService teamService;
-    private PlayerService playerService;
 
     @Autowired
     public TeamController(TeamService teamService, PlayerService playerService) {
         this.teamService = teamService;
-        this.playerService = playerService;
     }
 
 

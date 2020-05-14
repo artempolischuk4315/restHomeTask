@@ -5,14 +5,12 @@ import org.springframework.stereotype.Service;
 import polishchuk.dto.PlayerDto;
 import polishchuk.entity.Player;
 import polishchuk.entity.Team;
-import polishchuk.mapper.Mapper;
+import polishchuk.service.mapper.Mapper;
 import polishchuk.repository.PlayerRepository;
 import polishchuk.repository.TeamRepository;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class PlayerService {
@@ -34,31 +32,25 @@ public class PlayerService {
     }
 
     public PlayerDto savePlayer(PlayerDto playerDto){
-
         Player player = mapper.mapDtoToEntity(playerDto);
         Optional<Team> playerTeam = teamRepository.findByName(playerDto.getTeam());
 
-        if(!playerTeam.isPresent()||
-                playerRepository.findByLastName(player.getLastName()).isPresent()){
-            throw new EntityNotFoundException("Such player already exists or no such team");
-        }
+        checkIfPlayerOrTeamExists(player, playerTeam);
+
         player.setTeam(playerTeam.get());
 
         return mapper.mapEntityToDto(playerRepository.save(player));
 
     }
 
-    public PlayerDto updatePlayer(PlayerDto player, Integer id){
+    public PlayerDto updatePlayer(PlayerDto playerDto, Integer id){
+        Player player = mapper.mapDtoToEntity(playerDto);
+        Optional<Team> playerTeam = teamRepository.findByName(playerDto.getTeam());
 
-        playerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("No such player"));
+        checkIfPlayerOrTeamExists(player, playerTeam);
+        playerDto.setId(id);
 
-        System.out.println("TEAM IS "+player.getTeam());
-        Team playerTeam = teamRepository.findByName(player.getTeam()).orElseThrow(()-> new EntityNotFoundException("No such team"));
-
-        player.setId(id);
-        Player playerEntity = mapper.mapDtoToEntity(player);
-        playerEntity.setTeam(playerTeam);
+        Player playerEntity = setPlayerEntityForSavingWithRightIdAndTeam(playerDto, playerTeam);
 
         return mapper.mapEntityToDto(playerRepository.save(playerEntity));
     }
@@ -72,10 +64,16 @@ public class PlayerService {
         return true;
     }
 
+    private Player setPlayerEntityForSavingWithRightIdAndTeam(PlayerDto playerDto, Optional<Team> playerTeam) {
+        Player playerEntity = mapper.mapDtoToEntity(playerDto);
+        playerEntity.setTeam(playerTeam.get());
+        return playerEntity;
+    }
 
-    public List<Player> findAllFreePlayers(){
-        return playerRepository.findAll().stream()
-                .filter(player -> player.getTeam().getName().equals("f/a"))
-                .collect(Collectors.toList());
+    private void checkIfPlayerOrTeamExists(Player player, Optional<Team> playerTeam) {
+        if(!playerTeam.isPresent()||
+                playerRepository.findByLastName(player.getLastName()).isPresent()){
+            throw new EntityNotFoundException("Such player already exists or no such team");
+        }
     }
 }

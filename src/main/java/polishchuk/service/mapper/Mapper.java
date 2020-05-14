@@ -1,4 +1,4 @@
-package polishchuk.mapper;
+package polishchuk.service.mapper;
 
 public interface Mapper<D,E> {
 

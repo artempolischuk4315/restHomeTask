@@ -1,9 +1,9 @@
-package polishchuk.mapper.impl;
+package polishchuk.service.mapper.impl;
 
 import org.springframework.stereotype.Component;
 import polishchuk.dto.PlayerDto;
 import polishchuk.entity.Player;
-import polishchuk.mapper.Mapper;
+import polishchuk.service.mapper.Mapper;
 
 @Component
 public class PlayerMapper implements Mapper<PlayerDto, Player> {
