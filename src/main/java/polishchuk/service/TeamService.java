@@ -9,6 +9,7 @@ import polishchuk.service.mapper.Mapper;
 import polishchuk.repository.PlayerRepository;
 import polishchuk.repository.TeamRepository;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.HashMap;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 public class TeamService {
 
-    private static final String FREE_PLAYERS = "f/a";
+    private static final String FREE_PLAYERS_TEAM = "f/a";
     private TeamRepository teamRepository;
     private PlayerRepository playerRepository;
     private Mapper<TeamDto, Team> mapper;
@@ -39,7 +40,7 @@ public class TeamService {
     public TeamDto save(TeamDto team){
         Optional<Team> teamInDb = teamRepository.findByName(team.getName());
         if(teamInDb.isPresent()){
-           throw new EntityNotFoundException("Such team already exists");
+           throw new EntityExistsException("Such team already exists");
         }
 
         return mapper.mapEntityToDto(teamRepository.save(mapper.mapDtoToEntity(team)));
@@ -47,14 +48,15 @@ public class TeamService {
 
     @Transactional
     public Map<String, Integer> update(Integer playerId, TeamDto teamDto){
-        Player player = playerRepository.findById(playerId).orElseThrow(EntityNotFoundException::new);
-        Team team = teamRepository.findByName(teamDto.getName()).orElseThrow(EntityNotFoundException::new);
+        Player player = playerRepository
+                .findById(playerId).orElseThrow(EntityNotFoundException::new);
+        Team team = teamRepository
+                .findByName(teamDto.getName()).orElseThrow(EntityNotFoundException::new);
 
-        return getTeamWithPlayers(team.getName(), player, team);
+        return getTeamAndNumberOfPlayersWithSavingInDb(team.getName(), player, team);
     }
 
-    private Map<String, Integer> getTeamWithPlayers
-            (String teamName, Player player, Team team) {
+    private Map<String, Integer> getTeamAndNumberOfPlayersWithSavingInDb(String teamName, Player player, Team team) {
         player.setTeam(team);
         Map<String, Integer> teamWithPlayers = new HashMap<>();
 
@@ -77,7 +79,7 @@ public class TeamService {
     }
 
     private List<Player> FreePlayers(Team teamToDelete) {
-        Team freeTeam = teamRepository.findByName(FREE_PLAYERS).get();
+        Team freeTeam = teamRepository.findByName(FREE_PLAYERS_TEAM).get();
 
         List<Player> playersToFree = teamToDelete.getPlayers().stream()
                 .peek(player -> player.setTeam(freeTeam))
