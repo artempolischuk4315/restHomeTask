@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class TeamDto {
+
+    private Integer id;
+
     private String name;
 
     @Override

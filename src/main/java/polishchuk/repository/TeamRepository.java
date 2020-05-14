@@ -7,7 +7,7 @@ import polishchuk.entity.Team;
 import java.util.Optional;
 
 @Repository
-public interface TeamRepository extends JpaRepository<Team, Long> {
+public interface TeamRepository extends JpaRepository<Team, Integer> {
 
     public Optional<Team> findByName(String name);
 

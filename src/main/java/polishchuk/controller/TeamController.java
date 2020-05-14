@@ -1,21 +1,16 @@
 package polishchuk.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.*;
 import polishchuk.dto.TeamDto;
 import polishchuk.entity.Player;
-import polishchuk.entity.Team;
 import polishchuk.service.PlayerService;
 import polishchuk.service.TeamService;
 
 import java.util.List;
+import java.util.Map;
 
-@Controller
+@RestController
 public class TeamController {
 
     private TeamService teamService;
@@ -27,54 +22,26 @@ public class TeamController {
         this.playerService = playerService;
     }
 
-    @GetMapping("/teams")
-    public String showAllPlayers(Model model){
 
-        List<Team> allTeams = teamService.findAllTeams();
-        model.addAttribute("teams", allTeams);
-
-        return "all-teams";
-    }
-
-    @GetMapping("/teams/redactor")
-    public String showTeamRedactor(){
-
-        return "team-redactor";
+    @GetMapping("/teams/{id}")
+    public TeamDto getTeam(@PathVariable Integer id){
+        return teamService.findById(id);
     }
 
     @PostMapping("/teams/creator")
-    public String createTeam(TeamDto team){
-
-        if(!teamService.save(team)){
-            return "team-redactor";
-        }
-
-        return "redirect:/";
+    public TeamDto createTeam(@RequestBody TeamDto team){
+        return teamService.save(team);
     }
 
 
-    @GetMapping("/teams/player-to-team")
-    public String showUpdateTeamPage( Model model){
-
-        List<Player> freePlayers = playerService.findAllFreePlayers();
-        model.addAttribute("players", freePlayers);
-
-        return "players-adder";
+    @PutMapping("/teams/updater/{playerId}")
+    public Map<String, Integer> updateTeam
+            (@RequestBody TeamDto teamDto, @PathVariable Integer playerId){
+        return teamService.update(playerId, teamDto);
     }
 
-    @PutMapping("/teams/player-to-team")
-    public String addPlayerToTeam(String teamName, String lastName){
-
-        teamService.update(lastName, teamName);
-
-        return "redirect:/teams";
-    }
-
-    @DeleteMapping("/teams/remover")
-    public String deleteTeam(String teamName){
-
-        teamService.delete(teamName);
-
-        return "redirect:/teams";
+    @DeleteMapping("/teams/remover/{id}")
+    public boolean deleteTeam(@PathVariable Integer id){
+        return teamService.delete(id);
     }
 }

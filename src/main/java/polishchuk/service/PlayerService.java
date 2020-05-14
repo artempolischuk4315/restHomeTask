@@ -9,6 +9,7 @@ import polishchuk.mapper.Mapper;
 import polishchuk.repository.PlayerRepository;
 import polishchuk.repository.TeamRepository;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,53 +19,52 @@ public class PlayerService {
 
     private PlayerRepository playerRepository;
     private TeamRepository teamRepository;
+    private Mapper<PlayerDto, Player> mapper;
 
 
     @Autowired
-    public PlayerService(PlayerRepository playerRepository, TeamRepository teamRepository){
+    public PlayerService(PlayerRepository playerRepository, TeamRepository teamRepository, Mapper<PlayerDto, Player> mapper){
         this.playerRepository = playerRepository;
         this.teamRepository = teamRepository;
+        this.mapper = mapper;
     }
 
-    public List<Player> findAllPlayers(){
-       return playerRepository.findAll();
+    public PlayerDto findById(Integer id){
+        return mapper.mapEntityToDto(playerRepository.findById(id).orElseThrow(EntityNotFoundException::new));
     }
 
-    public boolean savePlayer(PlayerDto player){
+    public PlayerDto savePlayer(PlayerDto playerDto){
 
-        Optional<Team> playerTeam = teamRepository.findByName(player.getTeam());
+        Player player = mapper.mapDtoToEntity(playerDto);
+        Optional<Team> playerTeam = teamRepository.findByName(playerDto.getTeam());
+
         if(!playerTeam.isPresent()||
                 playerRepository.findByLastName(player.getLastName()).isPresent()){
-            return false;
+            throw new EntityNotFoundException("Such player already exists or no such team");
         }
+        player.setTeam(playerTeam.get());
 
-        Player newPlayer = new Player(player.getName(),
-                player.getLastName(), player.getAge(), playerTeam.get());
-        playerRepository.save(newPlayer);
+        return mapper.mapEntityToDto(playerRepository.save(player));
 
-        return true;
     }
 
-    public boolean updatePlayer(PlayerDto player){
-        Optional<Team> playerTeam = teamRepository.findByName(player.getTeam());
-        Optional<Player> playerInDbOptional = playerRepository.findByLastName(player.getLastName());
+    public PlayerDto updatePlayer(PlayerDto player, Integer id){
 
-        if(!playerTeam.isPresent()||!playerInDbOptional.isPresent()){
-            return false;
-        }
+        playerRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No such player"));
 
-        Player playerInDb = playerInDbOptional.get();
-        playerInDb.setAge(player.getAge());
-        playerInDb.setName(player.getName());
-        playerInDb.setTeam(playerTeam.get());
+        System.out.println("TEAM IS "+player.getTeam());
+        Team playerTeam = teamRepository.findByName(player.getTeam()).orElseThrow(()-> new EntityNotFoundException("No such team"));
 
-        playerRepository.save(playerInDb);
+        player.setId(id);
+        Player playerEntity = mapper.mapDtoToEntity(player);
+        playerEntity.setTeam(playerTeam);
 
-        return true;
+        return mapper.mapEntityToDto(playerRepository.save(playerEntity));
     }
 
-    public boolean deletePlayer(String lastName){
-        Optional<Player> player = playerRepository.findByLastName(lastName);
+    public boolean deletePlayer(Integer id){
+        Optional<Player> player = playerRepository.findById(id);
         if(!player.isPresent()){
             return false;
         }
@@ -72,11 +72,6 @@ public class PlayerService {
         return true;
     }
 
-    public Player findByLastName(String lastName) {
-        Optional<Player> player = playerRepository.findByLastName(lastName);
-
-        return player.orElse(null);
-    }
 
     public List<Player> findAllFreePlayers(){
         return playerRepository.findAll().stream()

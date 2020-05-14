@@ -17,7 +17,7 @@ public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
-    private Long id;
+    private Integer id;
 
     @Column
     private String name;

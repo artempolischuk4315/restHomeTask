@@ -45,77 +45,7 @@ class TeamServiceTest {
     @Mock
     Mapper<TeamDto, Team> mapper;
 
-    @Test
-    void findAllShouldReturnListOfTeams(){
-        when(teamRepository.findAll()).thenReturn(Collections.emptyList());
 
-        List<Team> actual = systemUnderTest.findAllTeams();
-
-        verify(teamRepository, times(1)).findAll();
-        assertEquals(Collections.emptyList(), actual);
-    }
-
-    @Test
-    void saveShouldReturnFalseIfSuchPlayerAlreadyExists(){
-        when(teamRepository.findByName(teamDto.getName())).thenReturn(Optional.of(teamEntity));
-
-        boolean actual = systemUnderTest.save(teamDto);
-        boolean expected = false;
-
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void saveShouldReturnTrueIfSuchPlayerNotExists(){
-        when(teamRepository.findByName(teamDto.getName())).thenReturn(Optional.empty());
-
-        boolean actual = systemUnderTest.save(teamDto);
-        boolean expected = true;
-
-        verify(teamRepository, times(1)).save(mapper.mapDtoToEntity(teamDto));
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void updateShouldReturnFalseIfNoSuchTeamInDB(){
-
-        boolean actual = systemUnderTest.update("lastName", "teamName");
-        boolean expected = false;
-
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void updateShouldReturnFalseIfNoSuchPlayerInDB(){
-        when(playerRepository.findByLastName("lastName")).thenReturn(Optional.empty());
-
-        boolean actual = systemUnderTest.update("lastName", "teamName");
-        boolean expected = false;
-
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void updateShouldReturnTrueIfUpdateWasSuccessful(){
-        when(teamRepository.findByName("teamName")).thenReturn(Optional.of(teamEntity));
-        when(playerRepository.findByLastName("lastName")).thenReturn(Optional.of(playerEntity));
-
-        boolean actual = systemUnderTest.update("lastName", "teamName");
-        boolean expected = true;
-
-        verify(playerRepository, times(1)).save(playerEntity);
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void deleteShouldReturnFalseIfNoSuchTeamInDB(){
-        when(teamRepository.findByName("teamName")).thenReturn(Optional.empty());
-
-        boolean actual = systemUnderTest.delete( "teamName");
-        boolean expected = false;
-
-        assertEquals(expected, actual);
-    }
 
 
 }

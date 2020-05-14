@@ -9,8 +9,11 @@ import polishchuk.mapper.Mapper;
 import polishchuk.repository.PlayerRepository;
 import polishchuk.repository.TeamRepository;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -29,38 +32,41 @@ public class TeamService {
         this.mapper = mapper;
     }
 
-    public List<Team> findAllTeams(){
-       return teamRepository.findAll();
+    public TeamDto findById(Integer id){
+        return mapper.mapEntityToDto(teamRepository.findById(id).orElseThrow(EntityNotFoundException::new));
     }
 
-    public boolean save(TeamDto team){
+    public TeamDto save(TeamDto team){
         Optional<Team> teamInDb = teamRepository.findByName(team.getName());
         if(teamInDb.isPresent()){
-            return false;
+           throw new EntityNotFoundException("No such team");
         }
 
-        teamRepository.save(mapper.mapDtoToEntity(team));
-        return true;
+        return mapper.mapEntityToDto(teamRepository.save(mapper.mapDtoToEntity(team)));
     }
 
-    public boolean update(String lastName, String teamName){
-        Optional <Player> optionalPlayer = playerRepository.findByLastName(lastName);
-        Optional <Team> optionalTeam = teamRepository.findByName(teamName);
+    @Transactional
+    public Map<String, Integer> update(Integer playerId, TeamDto teamDto){
+        Player player = playerRepository.findById(playerId).orElseThrow(EntityNotFoundException::new);
+        Team team = teamRepository.findByName(teamDto.getName()).orElseThrow(EntityNotFoundException::new);
 
-        if(!optionalPlayer.isPresent()||!optionalTeam.isPresent()) {
-            return false;
-        }
+        return getTeamWithPlayers(team.getName(), player, team);
+    }
 
-        optionalPlayer.get().setTeam(optionalTeam.get());
-        playerRepository.save(optionalPlayer.get());
+    private Map<String, Integer> getTeamWithPlayers
+            (String teamName, Player player, Team team) {
+        player.setTeam(team);
+        Map<String, Integer> teamWithPlayers = new HashMap<>();
 
-        return true;
+        playerRepository.save(player);
+        teamWithPlayers.put(teamName, team.getPlayers().size());
+        return teamWithPlayers;
     }
 
 
     @Transactional
-    public boolean delete (String teamName){
-        Optional <Team> optionalTeam = teamRepository.findByName(teamName);
+    public boolean delete (Integer id){
+        Optional <Team> optionalTeam = teamRepository.findById(id);
         if(!optionalTeam.isPresent())
             return false;
 

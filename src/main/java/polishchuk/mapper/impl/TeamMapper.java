@@ -12,11 +12,11 @@ public class TeamMapper implements Mapper<TeamDto, Team> {
 
     @Override
     public TeamDto mapEntityToDto(Team team) {
-        return TeamDto.builder().name(team.getName()).build();
+        return TeamDto.builder().name(team.getName()).id(team.getId()).build();
     }
 
     @Override
     public Team mapDtoToEntity(TeamDto teamDto) {
-        return Team.builder().name(teamDto.getName()).players(Collections.emptyList()).build();
+        return Team.builder().name(teamDto.getName()).players(Collections.emptyList()).id(teamDto.getId()).build();
     }
 }
