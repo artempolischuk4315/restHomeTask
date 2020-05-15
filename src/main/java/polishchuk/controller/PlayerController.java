@@ -7,6 +7,7 @@ import polishchuk.service.PlayerService;
 
 
 @RestController
+@RequestMapping("/players")
 public class PlayerController {
 
     private PlayerService playerService;
@@ -17,7 +18,7 @@ public class PlayerController {
     }
 
 
-    @GetMapping("/players/{id}")
+    @GetMapping("/{id}")
     public PlayerDto getPlayer(@PathVariable Integer id){
         return playerService.findById(id);
     }
@@ -27,12 +28,12 @@ public class PlayerController {
         return playerService.savePlayer(player);
     }
 
-    @DeleteMapping("/players/{id}")
+    @DeleteMapping("/{id}")
     public boolean deletePlayer(@PathVariable Integer id){
         return playerService.deletePlayer(id);
     }
 
-    @PutMapping("/players/{id}")
+    @PutMapping("/{id}")
     public PlayerDto updatePlayer(@RequestBody PlayerDto playerDto, @PathVariable Integer id){
         return playerService.updatePlayer(playerDto, id);
     }

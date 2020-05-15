@@ -10,7 +10,9 @@ import polishchuk.service.TeamService;
 import java.util.List;
 import java.util.Map;
 
+
 @RestController
+@RequestMapping("/teams")
 public class TeamController {
 
     private TeamService teamService;
@@ -21,24 +23,24 @@ public class TeamController {
     }
 
 
-    @GetMapping("/teams/{id}")
+    @GetMapping("/{id}")
     public TeamDto getTeam(@PathVariable Integer id){
         return teamService.findById(id);
     }
 
-    @PostMapping("/teams")
+    @PostMapping("")
     public TeamDto createTeam(@RequestBody TeamDto team){
         return teamService.save(team);
     }
 
 
-    @PutMapping("/teams/{playerId}")
+    @PutMapping("/{playerId}")
     public TeamDto updateTeam
             (@RequestBody TeamDto teamDto, @PathVariable Integer playerId){
         return teamService.update(playerId, teamDto);
     }
 
-    @DeleteMapping("/teams/{id}")
+    @DeleteMapping("/{id}")
     public boolean deleteTeam(@PathVariable Integer id){
         return teamService.delete(id);
     }
