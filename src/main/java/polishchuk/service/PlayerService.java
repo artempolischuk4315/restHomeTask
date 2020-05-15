@@ -32,25 +32,25 @@ public class PlayerService {
     }
 
     public PlayerDto savePlayer(PlayerDto playerDto){
-        Player player = mapper.mapDtoToEntity(playerDto);
+        Optional<Player> player = playerRepository.findByLastName(playerDto.getLastName());
         Optional<Team> playerTeam = teamRepository.findByName(playerDto.getTeam());
 
         checkIfPlayerOrTeamExists(player, playerTeam);
 
-        player.setTeam(playerTeam.get());
+        player.get().setTeam(playerTeam.get());
 
-        return mapper.mapEntityToDto(playerRepository.save(player));
+        return mapper.mapEntityToDto(playerRepository.save(player.get()));
 
     }
 
     public PlayerDto updatePlayer(PlayerDto playerDto, Integer id){
-        Player player = mapper.mapDtoToEntity(playerDto);
+        Optional<Player> player = playerRepository.findById(id);
         Optional<Team> playerTeam = teamRepository.findByName(playerDto.getTeam());
 
         checkIfPlayerOrTeamExists(player, playerTeam);
         playerDto.setId(id);
 
-        Player playerEntity = setPlayerEntityForSavingWithRightIdAndTeam(playerDto, playerTeam);
+        Player playerEntity = setPlayerEntityForSavingWithRightIdAndTeam(player, playerTeam);
 
         return mapper.mapEntityToDto(playerRepository.save(playerEntity));
     }
@@ -64,15 +64,14 @@ public class PlayerService {
         return true;
     }
 
-    private Player setPlayerEntityForSavingWithRightIdAndTeam(PlayerDto playerDto, Optional<Team> playerTeam) {
-        Player playerEntity = mapper.mapDtoToEntity(playerDto);
+    private Player setPlayerEntityForSavingWithRightIdAndTeam(Optional<Player> player, Optional<Team> playerTeam) {
+        Player playerEntity = player.get();
         playerEntity.setTeam(playerTeam.get());
         return playerEntity;
     }
 
-    private void checkIfPlayerOrTeamExists(Player player, Optional<Team> playerTeam) {
-        if(!playerTeam.isPresent()||
-                playerRepository.findByLastName(player.getLastName()).isPresent()){
+    private void checkIfPlayerOrTeamExists(Optional<Player> player, Optional<Team> playerTeam) {
+        if((!playerTeam.isPresent()) || (!player.isPresent())){
             throw new EntityNotFoundException("Such player already exists or no such team");
         }
     }

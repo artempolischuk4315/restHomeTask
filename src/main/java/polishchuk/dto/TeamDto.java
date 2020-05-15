@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,6 +16,8 @@ public class TeamDto {
     private Integer id;
 
     private String name;
+
+    private List<String> playersLastNames;
 
     @Override
     public String toString() {

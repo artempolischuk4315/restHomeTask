@@ -81,7 +81,6 @@ class PlayerServiceTest {
 
     @Test
     void savePlayerShouldThrowExceptionIfNewPlayerTeamNotExists(){
-        when(playerMapper.mapDtoToEntity(playerDto)).thenReturn(playerEntity);
         when(teamRepository.findByName(PLAYER_TEAM)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, ()->systemUnderTest.savePlayer(playerDto));
@@ -89,7 +88,7 @@ class PlayerServiceTest {
 
     @Test
     void saveShouldReturnPlayerDtoIfSavingIsSuccessful(){
-        when(playerMapper.mapDtoToEntity(playerDto)).thenReturn(playerEntity);
+        when(playerRepository.findByLastName(PLAYER_LAST_NAME)).thenReturn(Optional.of(playerEntity));
         when(teamRepository.findByName(PLAYER_TEAM)).thenReturn(Optional.of(team));
         when(playerRepository.save(playerEntity)).thenReturn(playerEntity);
         when(playerMapper.mapEntityToDto(playerEntity)).thenReturn(playerDto);
@@ -106,7 +105,6 @@ class PlayerServiceTest {
 
     @Test
     void updatePlayerShouldThrowExceptionIfNewPlayerTeamNotExists(){
-        when(playerMapper.mapDtoToEntity(playerDto)).thenReturn(playerEntity);
         when(teamRepository.findByName(PLAYER_TEAM)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, ()->systemUnderTest.updatePlayer(playerDto, PLAYER_ID));
@@ -114,7 +112,7 @@ class PlayerServiceTest {
 
     @Test
     void updateShouldReturnPlayerDtoIfUpdatingIsSuccessful(){
-        when(playerMapper.mapDtoToEntity(playerDto)).thenReturn(playerEntity);
+        when(playerRepository.findById(PLAYER_ID)).thenReturn(Optional.of(playerEntity));
         when(teamRepository.findByName(PLAYER_TEAM)).thenReturn(Optional.of(team));
         when(playerRepository.save(playerEntity)).thenReturn(playerEntity);
         when(playerMapper.mapEntityToDto(playerEntity)).thenReturn(playerDto);
