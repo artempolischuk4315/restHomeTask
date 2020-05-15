@@ -105,15 +105,11 @@ class TeamServiceTest {
         when(playerRepository.findById(PLAYER_ID)).thenReturn(Optional.of(playerEntity));
         when(teamRepository.findByName(teamDto.getName())).thenReturn(Optional.of(teamEntity));
         when(playerRepository.save(playerEntity)).thenReturn(playerEntity);
-        when(teamEntity.getName()).thenReturn(TEAM_NAME);
-        when(teamEntity.getPlayers()).thenReturn(new ArrayList<>());
+        when(mapper.mapEntityToDto(teamEntity)).thenReturn(teamDto);
 
-        Map<String, Integer> teamAndPlayers = new HashMap<>();
-        teamAndPlayers.put(TEAM_NAME, NUMBER_OF_PLAYERS);
+        TeamDto actual = systemUnderTest.update(PLAYER_ID, teamDto);
 
-        Map<String, Integer> actual = systemUnderTest.update(PLAYER_ID, teamDto);
-
-        assertEquals(teamAndPlayers, actual);
+        assertEquals(teamDto, actual);
     }
 
     @Test

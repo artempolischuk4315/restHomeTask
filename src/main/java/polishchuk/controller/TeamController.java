@@ -26,19 +26,19 @@ public class TeamController {
         return teamService.findById(id);
     }
 
-    @PostMapping("/teams/creator")
+    @PostMapping("/teams")
     public TeamDto createTeam(@RequestBody TeamDto team){
         return teamService.save(team);
     }
 
 
-    @PutMapping("/teams/updater/{playerId}")
-    public Map<String, Integer> updateTeam
+    @PutMapping("/teams/{playerId}")
+    public TeamDto updateTeam
             (@RequestBody TeamDto teamDto, @PathVariable Integer playerId){
         return teamService.update(playerId, teamDto);
     }
 
-    @DeleteMapping("/teams/remover/{id}")
+    @DeleteMapping("/teams/{id}")
     public boolean deleteTeam(@PathVariable Integer id){
         return teamService.delete(id);
     }

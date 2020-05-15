@@ -47,22 +47,17 @@ public class TeamService {
     }
 
     @Transactional
-    public Map<String, Integer> update(Integer playerId, TeamDto teamDto){
+    public TeamDto update(Integer playerId, TeamDto teamDto){
         Player player = playerRepository
                 .findById(playerId).orElseThrow(EntityNotFoundException::new);
         Team team = teamRepository
                 .findByName(teamDto.getName()).orElseThrow(EntityNotFoundException::new);
 
-        return getTeamAndNumberOfPlayersWithSavingInDb(team.getName(), player, team);
-    }
-
-    private Map<String, Integer> getTeamAndNumberOfPlayersWithSavingInDb(String teamName, Player player, Team team) {
         player.setTeam(team);
-        Map<String, Integer> teamWithPlayers = new HashMap<>();
+        team.getPlayers().add(player);
 
         playerRepository.save(player);
-        teamWithPlayers.put(teamName, team.getPlayers().size());
-        return teamWithPlayers;
+        return mapper.mapEntityToDto(team);
     }
 
 

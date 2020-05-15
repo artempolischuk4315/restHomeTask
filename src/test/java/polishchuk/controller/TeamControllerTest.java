@@ -58,13 +58,11 @@ class TeamControllerTest {
 
     @Test
     void updateTeamShouldReturnMapOfStringAndInteger() {
-        Map<String, Integer> teamAndNumberOfPlayers = new HashMap<>();
-        teamAndNumberOfPlayers.put(TEAM_NAME, NUMBER_OF_PLAYERS);
-        when(teamService.update(PLAYER_ID, teamDto)).thenReturn(teamAndNumberOfPlayers);
+        when(teamService.update(PLAYER_ID, teamDto)).thenReturn(teamDto);
 
-        Map<String, Integer> actual = systemUnderTest.updateTeam(teamDto, PLAYER_ID);
+        TeamDto actual = systemUnderTest.updateTeam(teamDto, PLAYER_ID);
 
-        assertEquals(teamAndNumberOfPlayers, actual);
+        assertEquals(teamDto, actual);
     }
 
     @Test
