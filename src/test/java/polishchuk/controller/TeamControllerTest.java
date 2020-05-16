@@ -5,15 +5,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import polishchuk.dto.TeamDto;
 import polishchuk.service.TeamService;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,44 +39,34 @@ class TeamControllerTest {
     void getTeamShouldReturnTeamDto() {
         when(teamService.findById(TEAM_ID)).thenReturn(teamDto);
 
-        TeamDto actual = systemUnderTest.getTeam(TEAM_ID);
+        ResponseEntity<TeamDto> actual = systemUnderTest.getTeam(TEAM_ID);
 
-        assertEquals(teamDto, actual);
+        assertEquals(ResponseEntity.status(HttpStatus.OK).body(teamDto), actual);
     }
 
     @Test
     void createTeamShouldReturnTeamDto() {
         when(teamService.save(teamDto)).thenReturn(teamDto);
 
-        TeamDto actual = systemUnderTest.createTeam(teamDto);
+        ResponseEntity<TeamDto> actual = systemUnderTest.createTeam(teamDto);
 
-        assertEquals(teamDto, actual);
+        assertEquals(ResponseEntity.status(HttpStatus.OK).body(teamDto), actual);
     }
 
     @Test
     void updateTeamShouldReturnMapOfStringAndInteger() {
         when(teamService.update(PLAYER_ID, teamDto)).thenReturn(teamDto);
 
-        TeamDto actual = systemUnderTest.updateTeam(teamDto, PLAYER_ID);
+        ResponseEntity<TeamDto> actual = systemUnderTest.updateTeam(teamDto, PLAYER_ID);
 
-        assertEquals(teamDto, actual);
+        assertEquals(ResponseEntity.status(HttpStatus.OK).body(teamDto), actual);
     }
 
     @Test
     void deleteTeamShouldReturnTrueIfDeletingWasSuccessful() {
-        when(teamService.delete(TEAM_ID)).thenReturn(true);
+        ResponseEntity<Void> actual = systemUnderTest.deleteTeam(TEAM_ID);
 
-        boolean actual = systemUnderTest.deleteTeam(TEAM_ID);
-
-        assertTrue(actual);
+        assertEquals(ResponseEntity.status(HttpStatus.OK).build(), actual);
     }
 
-    @Test
-    void deleteTeamShouldReturnFalseIfDeletingWasNotSuccessful() {
-        when(teamService.delete(TEAM_ID)).thenReturn(false);
-
-        boolean actual = systemUnderTest.deleteTeam(TEAM_ID);
-
-        assertFalse(actual);
-    }
 }

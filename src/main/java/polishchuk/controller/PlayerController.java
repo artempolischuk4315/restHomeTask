@@ -1,10 +1,11 @@
 package polishchuk.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import polishchuk.dto.PlayerDto;
 import polishchuk.service.PlayerService;
-
 
 @RestController
 @RequestMapping("/players")
@@ -17,25 +18,28 @@ public class PlayerController {
         this.playerService = playerService;
     }
 
-
     @GetMapping("/{id}")
-    public PlayerDto getPlayer(@PathVariable Integer id){
-        return playerService.findById(id);
+    public ResponseEntity<PlayerDto> getPlayer(@PathVariable Integer id){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(playerService.findById(id));
     }
 
     @PostMapping()
-    public PlayerDto addPlayer(@RequestBody PlayerDto player){
-        return playerService.savePlayer(player);
+    public ResponseEntity<PlayerDto> addPlayer(@RequestBody PlayerDto player){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(playerService.savePlayer(player));
     }
 
     @DeleteMapping("/{id}")
-    public boolean deletePlayer(@PathVariable Integer id){
-        return playerService.deletePlayer(id);
+    public ResponseEntity<Void> deletePlayer(@PathVariable Integer id){
+        playerService.deletePlayer(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PutMapping("/{id}")
-    public PlayerDto updatePlayer(@RequestBody PlayerDto playerDto, @PathVariable Integer id){
-        return playerService.updatePlayer(playerDto, id);
+    public ResponseEntity <PlayerDto> updatePlayer(@RequestBody PlayerDto playerDto, @PathVariable Integer id){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(playerService.updatePlayer(playerDto, id));
     }
 
 

@@ -55,13 +55,12 @@ public class PlayerService {
         return mapper.mapEntityToDto(playerRepository.save(playerEntity));
     }
 
-    public boolean deletePlayer(Integer id){
+    public void deletePlayer(Integer id){
         Optional<Player> player = playerRepository.findById(id);
-        if(!player.isPresent()){
-            return false;
-        }
+        if(!player.isPresent())
+            throw new EntityNotFoundException("No such player");
+
         playerRepository.delete(player.get());
-        return true;
     }
 
     private Player setPlayerEntityForSavingWithRightIdAndTeam(Optional<Player> player, Optional<Team> playerTeam) {

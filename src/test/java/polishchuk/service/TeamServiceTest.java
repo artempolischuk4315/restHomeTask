@@ -113,22 +113,9 @@ class TeamServiceTest {
     }
 
     @Test
-    void deleteShouldReturnTrueIfDeletingSuccessful(){
-        when(teamRepository.findById(TEAM_ID)).thenReturn(Optional.of(teamEntity));
-        when(teamRepository.findByName("f/a")).thenReturn(Optional.of(new Team()));
-        when(playerRepository.saveAll(anyCollection())).thenReturn(Collections.emptyList());
-
-        boolean actual = systemUnderTest.delete(TEAM_ID);
-
-        assertTrue(actual);
-    }
-
-    @Test
     void deleteShouldReturnTrueIfThereIsNoTeamToDelete(){
         when(teamRepository.findById(TEAM_ID)).thenReturn(Optional.empty());
 
-        boolean actual = systemUnderTest.delete(TEAM_ID);
-
-        assertFalse(actual);
+        assertThrows(EntityNotFoundException.class, ()->systemUnderTest.delete(TEAM_ID));
     }
 }

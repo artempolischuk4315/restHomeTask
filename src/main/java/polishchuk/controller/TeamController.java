@@ -1,6 +1,8 @@
 package polishchuk.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import polishchuk.dto.TeamDto;
 import polishchuk.entity.Player;
@@ -18,30 +20,34 @@ public class TeamController {
     private TeamService teamService;
 
     @Autowired
-    public TeamController(TeamService teamService, PlayerService playerService) {
+    public TeamController(TeamService teamService) {
         this.teamService = teamService;
     }
 
 
     @GetMapping("/{id}")
-    public TeamDto getTeam(@PathVariable Integer id){
-        return teamService.findById(id);
+    public ResponseEntity<TeamDto> getTeam(@PathVariable Integer id) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(teamService.findById(id));
     }
 
     @PostMapping("")
-    public TeamDto createTeam(@RequestBody TeamDto team){
-        return teamService.save(team);
+    public ResponseEntity<TeamDto> createTeam(@RequestBody TeamDto team) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(teamService.save(team));
     }
 
 
-    @PutMapping("/{playerId}")
-    public TeamDto updateTeam
+    @PutMapping("/{playerId}/players")
+    public ResponseEntity<TeamDto> updateTeam
             (@RequestBody TeamDto teamDto, @PathVariable Integer playerId){
-        return teamService.update(playerId, teamDto);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(teamService.update(playerId, teamDto));
     }
 
     @DeleteMapping("/{id}")
-    public boolean deleteTeam(@PathVariable Integer id){
-        return teamService.delete(id);
+    public ResponseEntity<Void> deleteTeam(@PathVariable Integer id){
+        teamService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

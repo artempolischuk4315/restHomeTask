@@ -123,20 +123,9 @@ class PlayerServiceTest {
     }
 
     @Test
-    void deleteShouldReturnTrueIfDeletingWasSuccessful(){
-        when(playerRepository.findById(PLAYER_ID)).thenReturn(Optional.of(playerEntity));
-
-        boolean actual = systemUnderTest.deletePlayer(PLAYER_ID);
-
-        assertTrue(actual);
-    }
-
-    @Test
     void deleteShouldReturnFalseIfNoSuchUserToDelete(){
         when(playerRepository.findById(PLAYER_ID)).thenReturn(Optional.empty());
 
-        boolean actual = systemUnderTest.deletePlayer(PLAYER_ID);
-
-        assertFalse(actual);
+        assertThrows(EntityNotFoundException.class, ()->systemUnderTest.deletePlayer(PLAYER_ID));
     }
 }

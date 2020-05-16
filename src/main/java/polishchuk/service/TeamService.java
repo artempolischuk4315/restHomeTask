@@ -60,15 +60,14 @@ public class TeamService {
 
 
     @Transactional
-    public boolean delete (Integer id){
+    public void delete (Integer id){
         Optional <Team> optionalTeam = teamRepository.findById(id);
         if(!optionalTeam.isPresent())
-            return false;
+            throw new EntityNotFoundException("No such team");
 
         Team teamToDelete = optionalTeam.get();
         FreePlayers(teamToDelete);
         teamRepository.delete(teamToDelete);
-        return true;
     }
 
     private List<Player> FreePlayers(Team teamToDelete) {

@@ -5,14 +5,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import polishchuk.dto.PlayerDto;
-import polishchuk.entity.Player;
 import polishchuk.service.PlayerService;
-import polishchuk.service.mapper.Mapper;
 
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,45 +45,35 @@ class PlayerControllerTest {
     void getPlayerShouldReturnPlayerDtoWithTheSameIdAsEntered(){
         when(playerService.findById(PLAYER_ID)).thenReturn(playerDto);
 
-        PlayerDto actual = systemUnderTest.getPlayer(PLAYER_ID);
+        ResponseEntity <PlayerDto> actual = systemUnderTest.getPlayer(PLAYER_ID);
 
-        assertEquals(playerDto, actual);
+        assertEquals(ResponseEntity.status(HttpStatus.OK).body(playerDto), actual);
     }
 
     @Test
     void addPlayerShouldReturnPlayerDto(){
         when(playerService.savePlayer(playerDto)).thenReturn(playerDto);
 
-        PlayerDto actual = systemUnderTest.addPlayer(playerDto);
+        ResponseEntity <PlayerDto> actual = systemUnderTest.addPlayer(playerDto);
 
-        assertEquals(playerDto, actual);
+        assertEquals(ResponseEntity.status(HttpStatus.OK).body(playerDto), actual);
     }
 
     @Test
     void updatePlayerShouldReturnUpdatedPlayerDto(){
         when(playerService.updatePlayer(playerDto, PLAYER_ID)).thenReturn(playerDto);
 
-        PlayerDto actual = systemUnderTest.updatePlayer(playerDto, PLAYER_ID);
+        ResponseEntity <PlayerDto>  actual = systemUnderTest.updatePlayer(playerDto, PLAYER_ID);
 
-        assertEquals(playerDto, actual);
+        assertEquals(ResponseEntity.status(HttpStatus.OK).body(playerDto), actual);
     }
 
-    @Test
-    void deletePlayerShouldReturnFalseIfDeletingWasNotSuccessful(){
-        when(playerService.deletePlayer(PLAYER_ID)).thenReturn(false);
-
-        boolean actual = systemUnderTest.deletePlayer(PLAYER_ID);
-
-        assertFalse(actual);
-    }
 
     @Test
     void deletePlayerShouldReturnTrueIfDeletingWasSuccessful(){
-        when(playerService.deletePlayer(PLAYER_ID)).thenReturn(true);
+        ResponseEntity <Void>  actual = systemUnderTest.deletePlayer(PLAYER_ID);
 
-        boolean actual = systemUnderTest.deletePlayer(PLAYER_ID);
-
-        assertTrue(actual);
+        assertEquals(ResponseEntity.status(HttpStatus.OK).build(), actual);
     }
 
 
