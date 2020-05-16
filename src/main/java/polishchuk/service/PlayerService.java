@@ -9,6 +9,7 @@ import polishchuk.service.mapper.Mapper;
 import polishchuk.repository.PlayerRepository;
 import polishchuk.repository.TeamRepository;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
@@ -35,11 +36,13 @@ public class PlayerService {
         Optional<Player> player = playerRepository.findByLastName(playerDto.getLastName());
         Optional<Team> playerTeam = teamRepository.findByName(playerDto.getTeam());
 
-        checkIfPlayerOrTeamExists(player, playerTeam);
+        if(player.isPresent() || !playerTeam.isPresent())
+            throw new EntityExistsException("Player already exists or no such team");
 
-        player.get().setTeam(playerTeam.get());
+        Player playerEntity = mapper.mapDtoToEntity(playerDto);
+        playerEntity.setTeam(playerTeam.get());
 
-        return mapper.mapEntityToDto(playerRepository.save(player.get()));
+        return mapper.mapEntityToDto(playerRepository.save(playerEntity));
 
     }
 
