@@ -13,6 +13,7 @@ import polishchuk.repository.TeamRepository;
 import polishchuk.service.mapper.Mapper;
 
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
@@ -76,22 +77,23 @@ class PlayerServiceTest {
 
     @Test
     void savePlayerShouldThrowExceptionIfSuchPlayerAlreadyExists(){
-        assertThrows(EntityNotFoundException.class, ()->systemUnderTest.savePlayer(playerDto));
+        assertThrows(EntityExistsException.class, ()->systemUnderTest.savePlayer(playerDto));
     }
 
     @Test
     void savePlayerShouldThrowExceptionIfNewPlayerTeamNotExists(){
         when(teamRepository.findByName(PLAYER_TEAM)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, ()->systemUnderTest.savePlayer(playerDto));
+        assertThrows(EntityExistsException.class, ()->systemUnderTest.savePlayer(playerDto));
     }
 
     @Test
     void saveShouldReturnPlayerDtoIfSavingIsSuccessful(){
-        when(playerRepository.findByLastName(PLAYER_LAST_NAME)).thenReturn(Optional.of(playerEntity));
+        when(playerRepository.findByLastName(PLAYER_LAST_NAME)).thenReturn(Optional.empty());
         when(teamRepository.findByName(PLAYER_TEAM)).thenReturn(Optional.of(team));
         when(playerRepository.save(playerEntity)).thenReturn(playerEntity);
         when(playerMapper.mapEntityToDto(playerEntity)).thenReturn(playerDto);
+        when(playerMapper.mapDtoToEntity(playerDto)).thenReturn(playerEntity);
 
         PlayerDto actual = systemUnderTest.savePlayer(playerDto);
 
